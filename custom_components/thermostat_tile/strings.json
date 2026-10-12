@@ -1,0 +1,16 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Thermostat Tile",
+        "description": "Adds the Thermostat Tile card to your dashboards: a thermostat tile that shows mode, room temperature, preset and target temperature. After this, edit a dashboard, choose Add card and pick Thermostat Tile."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Thermostat Tile is already set up."
+    },
+    "create_entry": {
+      "default": "Done. Reload this page once (press F5, pull down on a phone or tablet, or restart a kiosk app) so your browser loads the card. Then edit a dashboard, choose Add card and pick Thermostat Tile."
+    }
+  }
+}

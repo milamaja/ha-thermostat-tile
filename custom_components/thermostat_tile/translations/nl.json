@@ -1,0 +1,16 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Thermostat Tile",
+        "description": "Voegt de kaart Thermostat Tile toe aan je dashboards: een thermostaattegel met modus, kamertemperatuur, voorinstelling en doeltemperatuur. Bewerk daarna een dashboard, kies Kaart toevoegen en kies Thermostat Tile."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Thermostat Tile is al ingesteld."
+    },
+    "create_entry": {
+      "default": "Klaar. Laad deze pagina één keer opnieuw (druk op F5, trek omlaag op een telefoon of tablet, of herstart een kiosk-app) zodat je browser de kaart laadt. Bewerk daarna een dashboard, kies Kaart toevoegen en kies Thermostat Tile."
+    }
+  }
+}
