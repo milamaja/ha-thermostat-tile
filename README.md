@@ -9,10 +9,6 @@ It is Home Assistant's own tile card, the size of a one-row tile, so it fits
 next to your other tiles. Everything is set up in the user interface, no YAML
 needed.
 
-<p>
-  <img src="https://raw.githubusercontent.com/milamaja/ha-thermostat-tile/main/images/tiles.png" width="540" alt="Three thermostat tiles: heating, eco and off, each with the Off, Heat and Eco buttons">
-</p>
-
 ## What you get
 
 - A **Thermostat Tile** card in the dashboard card picker, with a visual
@@ -29,6 +25,8 @@ needed.
 - No plus and minus buttons: tap the tile for Home Assistant's full thermostat
   dialog when you want to change the temperature.
 - Icon, colours and tap actions are the built-in tile's.
+
+<p><img src="https://raw.githubusercontent.com/milamaja/ha-thermostat-tile/main/images/tiles.png" width="540" alt="Three thermostat tiles: heating, eco and off, each with the Off, Heat and Eco buttons"></p>
 
 ## Installation
 
