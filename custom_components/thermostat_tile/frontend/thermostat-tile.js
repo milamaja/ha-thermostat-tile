@@ -8,7 +8,7 @@
  * are the built-in tile's.
  */
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.4";
 const CARD_TYPE = "thermostat-tile";
 const EDITOR_TYPE = "thermostat-tile-editor";
 
