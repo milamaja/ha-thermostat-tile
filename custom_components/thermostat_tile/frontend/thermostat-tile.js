@@ -8,7 +8,7 @@
  * are the built-in tile's.
  */
 
-const VERSION = "1.0.4";
+const VERSION = "1.1.5";
 const CARD_TYPE = "thermostat-tile";
 const EDITOR_TYPE = "thermostat-tile-editor";
 
@@ -299,25 +299,51 @@ class ThermostatTile extends HTMLElement {
   }
 
   // Off and the other modes end Eco; Eco switches heating on when it was off.
+  // With temperatures set under the integration's Configure: Heat raises the
+  // target to the heat temperature, Eco sets the eco temperature first (many
+  // thermostats, Nest among them, take no new target while in eco).
   async _setMode(mode) {
     const hass = this._hass;
     const stateObj = hass.states[this._config.entity];
     if (!stateObj) return;
     const target = { entity_id: this._config.entity };
-    const presets = stateObj.attributes.preset_modes || [];
+    const attrs = stateObj.attributes;
+    const presets = attrs.preset_modes || [];
+    const settings = await hass.callWS({ type: "thermostat_tile/settings" }).catch(() => ({}));
+    const canTarget = (attrs.supported_features & 1) === 1; // ClimateEntityFeature.TARGET_TEMPERATURE
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 1500));
+    let changed = false;
     if (mode === "eco") {
+      if (attrs.preset_mode === "eco" && stateObj.state !== "off") return;
       if (stateObj.state === "off") {
-        const on = (stateObj.attributes.hvac_modes || []).find((m) => m !== "off");
-        if (on) await hass.callService("climate", "set_hvac_mode", { hvac_mode: on }, target);
+        const on = (attrs.hvac_modes || []).find((m) => m !== "off");
+        if (on) {
+          await hass.callService("climate", "set_hvac_mode", { hvac_mode: on }, target);
+          changed = true;
+        }
       }
+      if (canTarget && settings.eco_temperature != null) {
+        if (changed) await settle();
+        await hass.callService("climate", "set_temperature", { temperature: settings.eco_temperature }, target);
+        changed = true;
+      }
+      if (changed) await settle();
       await hass.callService("climate", "set_preset_mode", { preset_mode: "eco" }, target);
       return;
     }
     if (stateObj.state !== mode) {
       await hass.callService("climate", "set_hvac_mode", { hvac_mode: mode }, target);
+      changed = true;
     }
-    if (mode !== "off" && stateObj.attributes.preset_mode === "eco" && presets.includes("none")) {
+    if (mode !== "off" && attrs.preset_mode === "eco" && presets.includes("none")) {
+      if (changed) await settle();
       await hass.callService("climate", "set_preset_mode", { preset_mode: "none" }, target);
+      changed = true;
+    }
+    const heatTo = settings.heat_temperature;
+    if (mode === "heat" && canTarget && heatTo != null && !(Number(attrs.temperature) >= heatTo)) {
+      if (changed) await settle();
+      await hass.callService("climate", "set_temperature", { temperature: heatTo }, target);
     }
   }
 }

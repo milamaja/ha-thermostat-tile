@@ -1,14 +1,21 @@
 {
   "domain": "thermostat_tile",
   "name": "Thermostat Tile",
-  "codeowners": ["@milamaja"],
+  "codeowners": [
+    "@milamaja"
+  ],
   "config_flow": true,
-  "dependencies": ["frontend", "http", "lovelace"],
+  "dependencies": [
+    "frontend",
+    "http",
+    "lovelace",
+    "websocket_api"
+  ],
   "documentation": "https://github.com/milamaja/ha-thermostat-tile",
   "integration_type": "service",
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/milamaja/ha-thermostat-tile/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "1.0.4"
+  "version": "1.1.5"
 }

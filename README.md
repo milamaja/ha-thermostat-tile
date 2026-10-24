@@ -22,6 +22,9 @@ needed.
     thermostat is off.
   - Another mode ends eco (sets the preset back to none) when the thermostat
     supports that.
+  - Optionally, **Heat** and **Eco** also set a target temperature, for
+    example 21.5 °C for Heat and 16 °C for Eco (see
+    [Temperatures](#temperatures)).
 - No plus and minus buttons: tap the tile for Home Assistant's full thermostat
   dialog when you want to change the temperature.
 - Icon, colours and tap actions are the built-in tile's.
@@ -58,6 +61,20 @@ card is available on all your dashboards.
 
 Reload the dashboard once afterwards (on a wall tablet: reload the kiosk app,
 or restart it).
+
+### Temperatures
+
+Under **Settings, Devices & services, Thermostat Tile, Configure** you can set
+the target temperature the buttons set:
+
+- **Heat temperature**: Heat raises the target to this temperature when it is
+  lower, for example 21.5 °C. Handy in the morning, when the thermostat is
+  still on its night temperature.
+- **Eco temperature**: Eco first sets this target, then the eco preset, for
+  example 16 °C. Many thermostats, such as Nest, accept no new target while in
+  eco, so it is set before.
+
+Leave a field empty and that button leaves the target as it is.
 
 ## Adding the card
 

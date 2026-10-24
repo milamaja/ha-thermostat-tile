@@ -6,16 +6,18 @@ import logging
 from pathlib import Path
 
 from aiohttp import web
+import voluptuous as vol
 
+from homeassistant.components import websocket_api
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.lovelace.const import LOVELACE_DATA
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .const import DOMAIN
+from .const import CONF_ECO_TEMPERATURE, CONF_HEAT_TEMPERATURE, DOMAIN
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -44,8 +46,24 @@ class ThermostatTileView(HomeAssistantView):
         )
 
 
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/settings"})
+@callback
+def ws_settings(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
+    """The temperatures the card's Heat and Eco buttons set (None: leave the target)."""
+    entries = hass.config_entries.async_entries(DOMAIN)
+    options = entries[0].options if entries else {}
+    connection.send_result(
+        msg["id"],
+        {
+            CONF_HEAT_TEMPERATURE: options.get(CONF_HEAT_TEMPERATURE),
+            CONF_ECO_TEMPERATURE: options.get(CONF_ECO_TEMPERATURE),
+        },
+    )
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Serve the card and load it in the frontend."""
+    websocket_api.async_register_command(hass, ws_settings)
     body = await hass.async_add_executor_job(CARD_FILE.read_bytes)
     # A new version gets a new URL, so browsers never run a stale copy.
     digest = hashlib.sha1(body).hexdigest()[:10]

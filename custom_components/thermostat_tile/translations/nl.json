@@ -12,5 +12,21 @@
     "create_entry": {
       "default": "Klaar. Laad deze pagina één keer opnieuw (druk op F5, trek omlaag op een telefoon of tablet, of herstart een kiosk-app) zodat je browser de kaart laadt. Bewerk daarna een dashboard, kies Kaart toevoegen en kies Thermostat Tile."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Thermostat Tile",
+        "description": "De doeltemperatuur die de knoppen van de tegel instellen. Laat een veld leeg om het doel te laten zoals het is.",
+        "data": {
+          "heat_temperature": "Temperatuur verwarmen",
+          "eco_temperature": "Temperatuur eco"
+        },
+        "data_description": {
+          "heat_temperature": "Verwarmen zet het doel op deze temperatuur als het lager is, bijvoorbeeld 21,5.",
+          "eco_temperature": "Eco zet dit doel voordat het de eco-voorinstelling aanzet, bijvoorbeeld 16."
+        }
+      }
+    }
   }
 }
