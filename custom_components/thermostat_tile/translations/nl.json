@@ -28,5 +28,15 @@
         }
       }
     }
+  },
+  "services": {
+    "heat": {
+      "name": "Verwarmen",
+      "description": "Zoals de knop Verwarmen van de tegel: verwarming aan, eco uit, en het doel omhoog naar de temperatuur voor verwarmen (Configureren) als het lager is."
+    },
+    "eco": {
+      "name": "Eco",
+      "description": "Zoals de knop Eco van de tegel: verwarming aan als die uit stond, het doel naar de eco-temperatuur (Configureren), dan de eco-voorinstelling."
+    }
   }
 }

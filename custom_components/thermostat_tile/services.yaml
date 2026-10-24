@@ -1,0 +1,8 @@
+heat:
+  target:
+    entity:
+      domain: climate
+eco:
+  target:
+    entity:
+      domain: climate

@@ -28,5 +28,15 @@
         }
       }
     }
+  },
+  "services": {
+    "heat": {
+      "name": "Heat",
+      "description": "Like the tile's Heat button: heating on, eco off, and the target up to the heat temperature (Configure) when it is lower."
+    },
+    "eco": {
+      "name": "Eco",
+      "description": "Like the tile's Eco button: heating on when it was off, the target to the eco temperature (Configure), then the eco preset."
+    }
   }
 }

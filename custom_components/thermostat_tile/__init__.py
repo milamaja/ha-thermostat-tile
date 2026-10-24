@@ -5,18 +5,21 @@ import hashlib
 import logging
 from pathlib import Path
 
-from aiohttp import web
-import voluptuous as vol
+import asyncio
+import inspect
 
-from homeassistant.components import websocket_api
+from aiohttp import web
+
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.lovelace.const import LOVELACE_DATA
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.service import async_extract_entity_ids
 from homeassistant.helpers.typing import ConfigType
 
+from . import actions
 from .const import CONF_ECO_TEMPERATURE, CONF_HEAT_TEMPERATURE, DOMAIN
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
@@ -46,24 +49,41 @@ class ThermostatTileView(HomeAssistantView):
         )
 
 
-@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/settings"})
-@callback
-def ws_settings(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
-    """The temperatures the card's Heat and Eco buttons set (None: leave the target)."""
+def _options(hass: HomeAssistant) -> dict:
     entries = hass.config_entries.async_entries(DOMAIN)
-    options = entries[0].options if entries else {}
-    connection.send_result(
-        msg["id"],
-        {
-            CONF_HEAT_TEMPERATURE: options.get(CONF_HEAT_TEMPERATURE),
-            CONF_ECO_TEMPERATURE: options.get(CONF_ECO_TEMPERATURE),
-        },
-    )
+    return dict(entries[0].options) if entries else {}
+
+
+async def _async_heat_or_eco(hass: HomeAssistant, call: ServiceCall) -> None:
+    """The Heat and Eco actions: what the tile's buttons do, for automations too."""
+    # Newer Home Assistant versions take only the call, older ones hass first.
+    if next(iter(inspect.signature(async_extract_entity_ids).parameters)) == "hass":
+        entity_ids = async_extract_entity_ids(hass, call)
+    else:
+        entity_ids = async_extract_entity_ids(call)
+    if inspect.isawaitable(entity_ids):  # a coroutine in some versions
+        entity_ids = await entity_ids
+    run = actions.heat if call.service == "heat" else actions.eco
+    temperature = _options(hass).get(CONF_HEAT_TEMPERATURE if call.service == "heat" else CONF_ECO_TEMPERATURE)
+    for entity_id in sorted(entity_ids):
+        state = hass.states.get(entity_id)
+        if state is None or not entity_id.startswith("climate."):
+            continue
+
+        async def climate(service: str, data: dict, entity_id: str = entity_id) -> None:
+            await hass.services.async_call("climate", service, {"entity_id": entity_id, **data}, blocking=True)
+
+        await run((state.state, dict(state.attributes)), climate, asyncio.sleep, temperature)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Serve the card and load it in the frontend."""
-    websocket_api.async_register_command(hass, ws_settings)
+    """Serve the card, load it in the frontend, and offer the Heat and Eco actions."""
+
+    async def handle(call: ServiceCall) -> None:
+        await _async_heat_or_eco(hass, call)
+
+    for service in ("heat", "eco"):
+        hass.services.async_register(DOMAIN, service, handle, schema=cv.make_entity_service_schema({}))
     body = await hass.async_add_executor_job(CARD_FILE.read_bytes)
     # A new version gets a new URL, so browsers never run a stale copy.
     digest = hashlib.sha1(body).hexdigest()[:10]

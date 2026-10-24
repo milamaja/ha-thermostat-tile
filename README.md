@@ -76,6 +76,24 @@ the target temperature the buttons set:
 
 Leave a field empty and that button leaves the target as it is.
 
+### Heat and Eco in automations
+
+The integration also offers the actions **Thermostat Tile: Heat** and
+**Thermostat Tile: Eco** (`thermostat_tile.heat`, `thermostat_tile.eco`). They
+do exactly what the buttons do, with the same temperatures, so an automation
+that switches to eco when everyone leaves, or back to heat when someone comes
+home, sets the same targets:
+
+```yaml
+actions:
+  - action: thermostat_tile.eco
+    target:
+      entity_id: climate.living_room
+```
+
+Change a temperature under **Configure** and it applies to the buttons and the
+automations at once.
+
 ## Adding the card
 
 1. Open your dashboard, click the **pencil** (top right) to edit it.
