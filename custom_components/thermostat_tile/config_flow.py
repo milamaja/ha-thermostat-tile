@@ -7,9 +7,19 @@ import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import callback
-from homeassistant.helpers.selector import NumberSelector, NumberSelectorConfig, NumberSelectorMode
+from homeassistant.helpers.selector import NumberSelector, NumberSelectorConfig, NumberSelectorMode, TimeSelector
 
-from .const import CONF_ECO_TEMPERATURE, CONF_HEAT_TEMPERATURE, DOMAIN, NAME
+from .const import (
+    CONF_ECO_TEMPERATURE,
+    CONF_EVENING_END,
+    CONF_EVENING_HEAT_TEMPERATURE,
+    CONF_EVENING_START,
+    CONF_HEAT_TEMPERATURE,
+    DEFAULT_EVENING_END,
+    DEFAULT_EVENING_START,
+    DOMAIN,
+    NAME,
+)
 
 
 class ThermostatTileConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -31,7 +41,7 @@ class ThermostatTileConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class ThermostatTileOptionsFlow(OptionsFlow):
-    """Heat and Eco temperature; leave a field empty to keep the target as it is."""
+    """Heat, evening Heat and Eco temperature; leave a field empty to keep the target as it is."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
@@ -43,6 +53,9 @@ class ThermostatTileOptionsFlow(OptionsFlow):
         schema = vol.Schema(
             {
                 vol.Optional(CONF_HEAT_TEMPERATURE): number,
+                vol.Optional(CONF_EVENING_HEAT_TEMPERATURE): number,
+                vol.Optional(CONF_EVENING_START, default=DEFAULT_EVENING_START): TimeSelector(),
+                vol.Optional(CONF_EVENING_END, default=DEFAULT_EVENING_END): TimeSelector(),
                 vol.Optional(CONF_ECO_TEMPERATURE): number,
             }
         )

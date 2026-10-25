@@ -20,10 +20,16 @@
         "description": "De doeltemperatuur die de knoppen van de tegel instellen. Laat een veld leeg om het doel te laten zoals het is.",
         "data": {
           "heat_temperature": "Temperatuur verwarmen",
+          "evening_heat_temperature": "Temperatuur verwarmen 's avonds",
+          "evening_start": "Avond vanaf",
+          "evening_end": "Avond tot",
           "eco_temperature": "Temperatuur eco"
         },
         "data_description": {
-          "heat_temperature": "Verwarmen zet het doel op deze temperatuur als het lager is, bijvoorbeeld 21,5.",
+          "heat_temperature": "Verwarmen zet het doel op deze temperatuur als het lager is, bijvoorbeeld 21.",
+          "evening_heat_temperature": "Optioneel: 's avonds gebruikt Verwarmen deze temperatuur, bijvoorbeeld 21,5. Laat leeg om de hele dag de temperatuur verwarmen te gebruiken.",
+          "evening_start": "Wanneer de avondtemperatuur begint, bijvoorbeeld 18:00.",
+          "evening_end": "Wanneer die eindigt, bijvoorbeeld 00:30 (na middernacht kan).",
           "eco_temperature": "Eco zet dit doel voordat het de eco-voorinstelling aanzet, bijvoorbeeld 16."
         }
       }

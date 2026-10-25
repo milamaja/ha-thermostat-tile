@@ -18,9 +18,19 @@ from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.service import async_extract_entity_ids
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.util import dt as dt_util
 
 from . import actions
-from .const import CONF_ECO_TEMPERATURE, CONF_HEAT_TEMPERATURE, DOMAIN
+from .const import (
+    CONF_ECO_TEMPERATURE,
+    CONF_EVENING_END,
+    CONF_EVENING_HEAT_TEMPERATURE,
+    CONF_EVENING_START,
+    CONF_HEAT_TEMPERATURE,
+    DEFAULT_EVENING_END,
+    DEFAULT_EVENING_START,
+    DOMAIN,
+)
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -64,7 +74,17 @@ async def _async_heat_or_eco(hass: HomeAssistant, call: ServiceCall) -> None:
     if inspect.isawaitable(entity_ids):  # a coroutine in some versions
         entity_ids = await entity_ids
     run = actions.heat if call.service == "heat" else actions.eco
-    temperature = _options(hass).get(CONF_HEAT_TEMPERATURE if call.service == "heat" else CONF_ECO_TEMPERATURE)
+    options = _options(hass)
+    if call.service == "heat":
+        temperature = actions.heat_temperature(
+            options.get(CONF_HEAT_TEMPERATURE),
+            options.get(CONF_EVENING_HEAT_TEMPERATURE),
+            options.get(CONF_EVENING_START) or DEFAULT_EVENING_START,
+            options.get(CONF_EVENING_END) or DEFAULT_EVENING_END,
+            dt_util.now().time(),
+        )
+    else:
+        temperature = options.get(CONF_ECO_TEMPERATURE)
     for entity_id in sorted(entity_ids):
         state = hass.states.get(entity_id)
         if state is None or not entity_id.startswith("climate."):

@@ -7,6 +7,7 @@ service on that entity and `sleep(seconds)` waits.
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
+from datetime import time
 from typing import Any
 
 TARGET_TEMPERATURE = 1  # ClimateEntityFeature.TARGET_TEMPERATURE
@@ -19,6 +20,22 @@ Sleep = Callable[[float], Awaitable[None]]
 
 def _can_target(attrs: dict[str, Any]) -> bool:
     return bool(int(attrs.get("supported_features") or 0) & TARGET_TEMPERATURE)
+
+
+def heat_temperature(
+    heat: float | None, evening: float | None, start: str, end: str, now: time
+) -> float | None:
+    """The temperature Heat sets at `now`: `evening` from `start` until `end`, else `heat`.
+
+    `start` and `end` are "HH:MM[:SS]"; an evening that ends after midnight
+    (18:00 to 00:30) wraps around.
+    """
+    if evening is not None:
+        first, last = time.fromisoformat(start), time.fromisoformat(end)
+        inside = first <= now < last if first <= last else (now >= first or now < last)
+        if inside:
+            return evening
+    return heat
 
 
 async def heat(state: tuple[str, dict[str, Any]], call: Call, sleep: Sleep, temperature: float | None) -> None:

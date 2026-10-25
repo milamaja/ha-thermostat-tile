@@ -68,8 +68,12 @@ Under **Settings, Devices & services, Thermostat Tile, Configure** you can set
 the target temperature the buttons set:
 
 - **Heat temperature**: Heat raises the target to this temperature when it is
-  lower, for example 21.5 °C. Handy in the morning, when the thermostat is
+  lower, for example 21 °C. Handy in the morning, when the thermostat is
   still on its night temperature.
+- **Evening heat temperature** (optional), with **Evening from** and **Evening
+  until**: in the evening Heat uses this temperature instead, for example
+  21.5 °C from 18:00 until 00:30 (an evening may end after midnight). Leave it
+  empty and Heat uses the heat temperature all day.
 - **Eco temperature**: Eco first sets this target, then the eco preset, for
   example 16 °C. Many thermostats, such as Nest, accept no new target while in
   eco, so it is set before.

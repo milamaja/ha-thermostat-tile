@@ -20,10 +20,16 @@
         "description": "The target temperature the tile's buttons set. Leave a field empty to keep the target as it is.",
         "data": {
           "heat_temperature": "Heat temperature",
+          "evening_heat_temperature": "Evening heat temperature",
+          "evening_start": "Evening from",
+          "evening_end": "Evening until",
           "eco_temperature": "Eco temperature"
         },
         "data_description": {
-          "heat_temperature": "Heat raises the target to this temperature when it is lower, for example 21.5.",
+          "heat_temperature": "Heat raises the target to this temperature when it is lower, for example 21.",
+          "evening_heat_temperature": "Optional: in the evening Heat uses this temperature instead, for example 21.5. Leave empty to use the heat temperature all day.",
+          "evening_start": "When the evening heat temperature starts, for example 18:00.",
+          "evening_end": "When it ends, for example 00:30 (after midnight is fine).",
           "eco_temperature": "Eco sets this target before it switches on the eco preset, for example 16."
         }
       }
@@ -32,7 +38,7 @@
   "services": {
     "heat": {
       "name": "Heat",
-      "description": "Like the tile's Heat button: heating on, eco off, and the target up to the heat temperature (Configure) when it is lower."
+      "description": "Like the tile's Heat button: heating on, eco off, and the target up to the heat temperature (Configure; in the evening the evening heat temperature) when it is lower."
     },
     "eco": {
       "name": "Eco",
